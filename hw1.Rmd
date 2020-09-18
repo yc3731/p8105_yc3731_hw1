@@ -1,61 +1,85 @@
 ---
 title: "Untitled"
+author: Yue Chen
 output: github_document
 ---
 
-# Problem 1
+## Problem 1
 
-# create a data frame
+```{r}
 library(tidyverse)
+```
 
+Create a data frame with the specified elements.
+
+```{r}
 df1 = tibble(
-  vec_numeric = rnorm(10),
-  vec_char = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"),
-  vec_logical = random_sample > 0,
-  vec_factor = factor(c("A", "B", "C", "A", "B", "C", "A", "B", "C", "A")))   
+  samp = rnorm(10),
+  char_vec = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"),
+  samp_gt_0 = samp > 0,
+  factor_vec = factor(c("A", "B", "C", "A", "B", "C", "A", "B", "C", "A")))   
+```
 
-df1
+Take the mean of each variable in data frame.
 
-# take the mean of each variable
-vec_numeric = rnorm(10)
-vec_numeric_mean = mean(vec_numeric)
+```{r}
+mean(pull(df1, samp))
+mean(pull(df1, samp_gt_0))
+mean(pull(df1, char_vec))
+mean(pull(df1, factor_vec))
+```
 
-vec_char = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
-vec_char_mean = mean(vec_char)
+I can take the mean of numbers and logical vectors but not character or factor.
 
-vec_logical = random_sample > 0
-vec_logical_mean = vec_logical
-
-vec_factor = factor(c("A", "B", "C", "A", "B", "C", "A", "B", "C", "A")
-vec_factor_mean = mean(vec_factor)   
-
-# it works for numeric vector but not for lofical vector, character vector, or factor vector
-
-# convert logical vector to numeric, and multiply the random sample by the result
-vec_logical_num = as.numeric(vec_logical)
-l = vec_logical_num * random_sample
-
-# convert logical vector to a factor, and multiply the random sample by the result
-vec_logical_factor = as.factor(vec_logical)
-f = vec_logical_factor * random_sample
-# cannot multiply a factor vector to a numeric factor
-
-# convert logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
-vec_logical_factor_num = as.numeric(vec_logical_factor)
-n = vec_logical_factor_num * random_sample
+```{r}
+as.numeric(pull(df1, samp))
+as.numeric(pull(df1, samp_gt_0))
+as.numeric(pull(df1, char_vec))
+as.numeric(pull(df1, factor_vec))
+```
 
 
-# Problem 2
+Convert logical vector to numeric, and multiply the random sample by the result.
+
+```{r}
+as.numeric(pull(df1,samp_gt_0)) * pull(df1, samp)
+```
+
+
+Convert logical vector to a factor, and multiply the random sample by the result.
+
+```{r}
+as.factor(pull(df1,samp_gt_0)) * pull(df1, samp)
+```
+
+I cannot multiply a factor to numbers.
+
+Convert logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
+
+```{r}
+as.numeric(as.factor(pull(df1, samp_gt_0))) * pull(df1, samp)
+
+```
+
+
+## Problem 2
+```{r}
 data("penguins", package = "palmerpenguins")
 
-nrow(penguins)
-ncol(penguins)
+```
 
-flipper_length_mean = mean(penguins$flipper_length_mm, na.rm = TRUE)
+```{r}
+summary(penguins)
+```
 
-# The data frame recorded information including species, island, bill length, bill depth, flipper length, body mass, and sex of 344 penguins from 2007 to 2009.
-# Excluding missing records, the mean flipper length of penguins is 200.9152 mm.
 
+The data frame contains `r ncol(penguins)` variables including `r names(penguins)` of `r nrow(penguins)` penguins. Species is a `r class(pull(penguins, species))` vector, with levels `r levels(pull(penguins, species))`. Island is a `r class(pull(penguins, island))` vector, with levels `r levels(pull(penguins, island))`. Bill_length_mm is a `r class(pull(penguins, bill_length_mm))` vector, with range of `r range(pull(penguins, bill_length_mm), na.rm = TRUE)` mm and mean of `r mean(pull(penguins, bill_length_mm), na.rm = TRUE)` mm. Bill_depth_mm is a `r class(pull(penguins, bill_depth_mm))` vector, with range of `r range(pull(penguins, bill_depth_mm), na.rm = TRUE)` mm and mean of `r mean(pull(penguins, bill_length_mm), na.rm = TRUE)` mm. Flipper_length_mm is a `r class(pull(penguins, flipper_length_mm))` vector, with range of `r range(pull(penguins, flipper_length_mm), na.rm = TRUE)` mm and mean of `r mean(pull(penguins, flipper_length_mm), na.rm = TRUE)` mm. Body_mass_g is a `r class(pull(penguins, body_mass_g))` vector, with range of `r range(pull(penguins, body_mass_g), na.rm = TRUE)` g and mean of `r mean(pull(penguins, body_mass_g), na.rm = TRUE)` g.
+There were 165 female penguins  and 168 penguins. 11 penguins' sex are unknown. 
+
+
+```{r}
 ggplot(penguins, aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + geom_point()
-
-ggsave("scatterplot 1.pdf")
+```
+```{r}
+ggsave("scatterplot1.pdf")
+```
